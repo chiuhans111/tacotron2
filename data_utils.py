@@ -31,6 +31,9 @@ class TextMelLoader(torch.utils.data.Dataset):
         # separate filename and text
         audiopath, text = audiopath_and_text[0], audiopath_and_text[1]
         text = self.get_text(text)
+        if text.numel()<=0:
+            # Check empty text input
+            return None
         mel = self.get_mel(audiopath)
         return (text, mel)
 
@@ -58,7 +61,14 @@ class TextMelLoader(torch.utils.data.Dataset):
         return text_norm
 
     def __getitem__(self, index):
-        return self.get_mel_text_pair(self.audiopaths_and_text[index])
+        pair = self.get_mel_text_pair(self.audiopaths_and_text[index])
+        while pair is None:
+            # skip this sample if pair is none, hope next sample will work, as
+            # long as one of the sample works, this will not go infinity but
+            # still a bad fix.
+            index = (index + 1)%len(self)
+            pair = self.get_mel_text_pair(self.audiopaths_and_text[index])
+        return pair
 
     def __len__(self):
         return len(self.audiopaths_and_text)

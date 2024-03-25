@@ -10,12 +10,15 @@ hyperparameter. Some cleaners are English-specific. You'll typically want to use
      the Unidecode library (https://pypi.python.org/pypi/Unidecode)
   3. "basic_cleaners" if you do not want to transliterate (in this case, you should also update
      the symbols in symbols.py to match your data).
+  4. "chinese_cleaners" for Chinese text, referenced the implementation from the MockingBird 
+      (https://github.com/babysor/MockingBird)
 '''
 
 import re
 from unidecode import unidecode
 from .numbers import normalize_numbers
-
+from pypinyin import lazy_pinyin, Style
+import jieba
 
 # Regular expression matching whitespace:
 _whitespace_re = re.compile(r'\s+')
@@ -86,5 +89,27 @@ def english_cleaners(text):
   text = lowercase(text)
   text = expand_numbers(text)
   text = expand_abbreviations(text)
+  text = collapse_whitespace(text)
+  return text
+
+
+def chinese_pinyin(text):
+  """
+  Convert chinese text to pinyin, reference:
+  https://github.com/babysor/MockingBird/blob/156723e37cfd3a82b276bad8606d6166e7ee2982/models/synthesizer/inference.py#L100
+  """
+  words = jieba.cut(text)
+  yin = lazy_pinyin(text, Style.TONE3, neutral_tone_with_five=True, tone_sandhi=True)
+  text = ' '.join(yin)
+  return text
+
+def chinese_cleaners(text):
+  '''Pipeline for Chinese text'''
+
+  text = chinese_pinyin(text)
+  text = convert_to_ascii(text)
+  text = lowercase(text)
+  # text = expand_numbers(text)
+  # text = expand_abbreviations(text)
   text = collapse_whitespace(text)
   return text
