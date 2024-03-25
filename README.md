@@ -1,3 +1,36 @@
+# Tacotron 2 (Modified for Chinese Text Support)
+This fork aims to add Chinese text support, and update to newer package
+dependence.
+
+## Major Modifications
+- added [jieba](https://github.com/fxsjy/jieba) and
+[pypinyin](https://github.com/mozillazg/python-pinyin) to support chinese text cleaner
+    - [update to cleaners.py](https://github.com/chiuhans111/tacotron2/commit/d39bf3449565fb641b62e754bce19a6125dbca35#diff-4273ce4eb1b4cd5e231a7a40ff747ba92c0fca4eac3884d7c685ed31b03cb89a)
+
+
+## My configuration
+
+### System
+- Windows 10
+- CUDA 11.8
+- cuDNN 8.9.7
+
+### Updated Package Version:
+- tensorflow==2.10.0
+- torch==2.2.1+cu118
+- librosa==0.10.1
+- matplotlib==3.8.3
+
+## Usage and Collaboration
+
+* **This is kind of a personal project:** I'm actively using and developing this
+  fork for my own Chinese TTS explorations.
+
+* **Community Interest:** If you're interested in Chinese TTS, feel free to
+  reference this code as a starting point or contribute to its development. I'm
+  open to pull requests and discussions on potential improvements.
+
+
 # Tacotron 2 (without wavenet)
 
 PyTorch implementation of [Natural TTS Synthesis By Conditioning
