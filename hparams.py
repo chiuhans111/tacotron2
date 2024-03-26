@@ -60,6 +60,7 @@ def create_hparams(hparams_string=None, verbose=False):
         gate_threshold=0.5,
         p_attention_dropout=0.1,
         p_decoder_dropout=0.1,
+        p_prenet_dropout=0.5,
 
         # Attention parameters
         attention_rnn_dim=1024,

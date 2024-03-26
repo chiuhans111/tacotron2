@@ -87,16 +87,17 @@ class Attention(nn.Module):
 
 
 class Prenet(nn.Module):
-    def __init__(self, in_dim, sizes):
+    def __init__(self, in_dim, sizes, hparams):
         super(Prenet, self).__init__()
         in_sizes = [in_dim] + sizes[:-1]
         self.layers = nn.ModuleList(
             [LinearNorm(in_size, out_size, bias=False)
              for (in_size, out_size) in zip(in_sizes, sizes)])
+        self.p_prenet_dropout = hparams.p_prenet_dropout
 
     def forward(self, x):
         for linear in self.layers:
-            x = F.dropout(F.relu(linear(x)), p=0.5, training=True)
+            x = F.dropout(F.relu(linear(x)), p=self.p_prenet_dropout, training=True)
         return x
 
 
@@ -217,7 +218,7 @@ class Decoder(nn.Module):
 
         self.prenet = Prenet(
             hparams.n_mel_channels * hparams.n_frames_per_step,
-            [hparams.prenet_dim, hparams.prenet_dim])
+            [hparams.prenet_dim, hparams.prenet_dim], hparams=hparams)
 
         self.attention_rnn = nn.LSTMCell(
             hparams.prenet_dim + hparams.encoder_embedding_dim,
